@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CoinSwitch Ariano</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url("a.png") no-repeat center center/cover;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .custom-card {
+      background: rgba(245, 245, 245, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      padding: 30px;
+    }
+    .dashboard { display: none; }
+    .scroll-container {
+      height: 200px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+    .scroll-container table {
+      border-collapse: collapse;
+      width: 100%;
+      animation: scrollUp 10s linear infinite;
+    }
+    .scroll-container th, .scroll-container td {
+      border: 1px solid white;
+      padding: 10px;
+      text-align: center;
+      color: white;
+    }
+    .profit { color: lightgreen; font-weight: bold; }
+    .loss { color: red; font-weight: bold; }
+    @keyframes scrollUp {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-100%); }
+    }
+    .coin-image img {
+      max-width: 200px;
+      border-radius: 10px;
+      border: 1px solid gray;
+    }
+    footer {
+      background: #212529;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column">
+
+  <nav class="navbar navbar-expand-lg bg-light">
+  <div class="container">
+    <a class="navbar-brand fw-bold mx-auto" href="#">CoinSwitch Ariano</a>
+  </div>
+</nav>
+
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">CoinSwitch Ariano</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <button class="btn btn-outline-info d-none me-2" id="nav-profile" data-bs-toggle="modal" data-bs-target="#profileModal">Profile</button>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-danger d-none" id="nav-logout" onclick="logout()">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5" id="login-container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="custom-card">
+          <h2 class="text-center mb-4">Login to CoinSwitch</h2>
+          <div class="alert alert-danger d-none" id="error-msg"></div>
+          <div class="mb-3">
+            <input type="text" id="username" class="form-control" placeholder="Username" />
+          </div>
+          <div class="mb-3">
+            <input type="password" id="password" class="form-control" placeholder="Password" />
+          </div>
+          <button class="btn btn-primary w-100" onclick="login()">Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container my-5 dashboard" id="dashboard">
+    <div class="custom-card">
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button">Dashboard</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button">Profile</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="market-tab" data-bs-toggle="tab" data-bs-target="#market" type="button">Market</button>
+        </li>
+      </ul>
+
+      <div class="tab-content mt-3">
+        <!-- Dashboard Tab -->
+        <div class="tab-pane fade show active" id="home">
+          <h2 class="text-center mb-3">Welcome, <span id="user-name"></span></h2>
+          <div class="balance text-center mb-4">
+            <strong>Your Balance:</strong> $<span id="balance"></span>
+          </div>
+          <div class="progress mb-3">
+            <div class="progress-bar bg-success" id="balance-bar" style="width: 50%">50%</div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="profile">
+          <div class="card text-center">
+            <div class="card-body">
+              <img src="d.jpg" class="rounded-circle mb-3" alt="Profile">
+              <h5 class="card-title" id="profile-username">User</h5>
+              <p class="card-text">Email: <span id="profile-email">user@example.com</span></p>
+              <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#profileModal">Edit Profile</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Market Tab -->
+        <div class="tab-pane fade" id="market">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h5 class="card-title">Bitcoin (BTC)</h5>
+                  <button class="btn btn-warning" onclick="tradeCoin('BTC')">Trade</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h5 class="card-title">Ethereum (ETH)</h5>
+                  <button class="btn btn-warning" onclick="tradeCoin('ETH')">Trade</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card text-center">
+                <div class="card-body">
+                  <h5 class="card-title">Ripple (XRP)</h5>
+                  <button class="btn btn-warning" onclick="tradeCoin('XRP')">Trade</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scroll-container mt-4">
+            <table class="table table-dark table-striped mb-0">
+              <thead>
+                <tr>
+                  <th>Coin</th>
+                  <th>Current Price ($)</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Bitcoin (BTC)</td>
+                  <td>42,000</td>
+                  <td class="profit">+5%</td>
+                </tr>
+                <tr>
+                  <td>Ethereum (ETH)</td>
+                  <td>2,900</td>
+                  <td class="loss">-3%</td>
+                </tr>
+                <tr>
+                  <td>Ripple (XRP)</td>
+                  <td>0.85</td>
+                  <td class="profit">+2%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="coin-image text-center my-4">
+            <img id="bigpic" src="" alt="Selected Coin Image">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Profile</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" id="edit-username" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="edit-email" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-primary" onclick="saveProfile()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast bg-success text-white" role="alert">
+      <div class="toast-body" id="toast-msg">Action successful!</div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 CoinSwitch Demo | Built with Bootstrap 5 By Ariano 224A7066</p>
+  </footer>
+
+  <script>
+    const users = {
+      "user1": { password: "pass123", balance: 1000, email: "user1@example.com" },
+      "admin": { password: "admin", balance: 5000, email: "admin@example.com" }
+    };
+    let currentUser = null;
+
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('error-msg');
+
+      if (!username || !password) {
+        errorMsg.textContent = "Please enter username and password.";
+        errorMsg.classList.remove("d-none");
+        return;
+      }
+
+      if (users[username] && users[username].password === password) {
+        errorMsg.classList.add("d-none");
+        currentUser = username;
+        showDashboard(username);
+        showToast("Login Successful!");
+      } else {
+        errorMsg.textContent = "Invalid username or password.";
+        errorMsg.classList.remove("d-none");
+      }
+    }
+
+    function showDashboard(username) {
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      document.getElementById('nav-logout').classList.remove("d-none");
+      document.getElementById('nav-profile').classList.remove("d-none");
+
+      document.getElementById('user-name').textContent = username;
+      document.getElementById('balance').textContent =
+        users[username].balance.toFixed(2);
+
+      const percentage = Math.min(100, (users[username].balance / 10000) * 100);
+      document.getElementById('balance-bar').style.width = percentage + "%";
+      document.getElementById('balance-bar').textContent = Math.round(percentage) + "%";
+
+      document.getElementById('profile-username').textContent = username;
+      document.getElementById('profile-email').textContent = users[username].email;
+    }
+
+    function tradeCoin(coin) {
+      let pic = "";
+      if (coin === "BTC") pic = "image/abc.png";
+      else if (coin === "ETH") pic = "image/pqr.png";
+      else if (coin === "XRP") pic = "image/xyz.png";
+      document.getElementById('bigpic').src = pic;
+      showToast("You selected " + coin);
+    }
+
+    function logout() {
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('login-container').style.display = 'block';
+      document.getElementById('nav-logout').classList.add("d-none");
+      document.getElementById('nav-profile').classList.add("d-none");
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('bigpic').src = '';
+      currentUser = null;
+      showToast("Logged out!");
+    }
+
+    function saveProfile() {
+      if (!currentUser) return;
+      const newUsername = document.getElementById('edit-username').value.trim();
+      const newEmail = document.getElementById('edit-email').value.trim();
+
+      if (newUsername) {
+        users[currentUser].username = newUsername;
+        document.getElementById('profile-username').textContent = newUsername;
+      }
+      if (newEmail) {
+        users[currentUser].email = newEmail;
+        document.getElementById('profile-email').textContent = newEmail;
+      }
+      showToast("Profile updated!");
+      const modal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+      modal.hide();
+    }
+
+    function showToast(message) {
+      document.getElementById('toast-msg').textContent = message;
+      const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+      toast.show();
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
