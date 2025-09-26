@@ -1,0 +1,48 @@
+ body {
+      font-family: Arial, sans-serif;
+      background: url("a.png") no-repeat center center/cover;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .custom-card {
+      background: rgba(245, 245, 245, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      padding: 30px;
+    }
+    .dashboard { display: none; }
+    .scroll-container {
+      height: 200px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+    .scroll-container table {
+      border-collapse: collapse;
+      width: 100%;
+      animation: scrollUp 10s linear infinite;
+    }
+    .scroll-container th, .scroll-container td {
+      border: 1px solid white;
+      padding: 10px;
+      text-align: center;
+      color: white;
+    }
+    .profit { color: lightgreen; font-weight: bold; }
+    .loss { color: red; font-weight: bold; }
+    @keyframes scrollUp {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-100%); }
+    }
+    .coin-image img {
+      max-width: 200px;
+      border-radius: 10px;
+      border: 1px solid gray;
+    }
+    footer {
+      background: #212529;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      margin-top: auto;
+    }
